@@ -5033,7 +5033,7 @@ function calcs.offence(env, actor, activeSkill)
 			--ImpaleStoredDamage should be named ImpaleEffect or similar
 			--Using the variable name ImpaleEffect breaks the calculations sidebar (?!)
 			output.ImpaleStoredDamage = impaleStoredDamage * 100
-			output.ImpaleModifier = 1 + impaleDMGModifier
+			output.ImpaleModifier = impaleDMGModifier
 
 			if breakdown then
 				breakdown.ImpaleStoredDamage = {}
@@ -5538,11 +5538,7 @@ function calcs.offence(env, actor, activeSkill)
 		output.WithBleedDPS = baseDPS
 	end
 	if skillFlags.impale then
-		if skillFlags.attack and skillData.doubleHitsWhenDualWielding and skillFlags.bothWeaponAttack then
-			-- due to how its being combined
-			output.ImpaleModifier = output.ImpaleModifier / 2
-		end
-		output.ImpaleDPS = output.impaleStoredHitAvg * ((output.ImpaleModifier or 1) - 1) * output.HitChance / 100 * skillData.dpsMultiplier
+		output.ImpaleDPS = output.impaleStoredHitAvg * (output.ImpaleModifier or 0) * output.HitChance / 100 * skillData.dpsMultiplier
 		if skillData.showAverage then
 			output.WithImpaleDPS = output.AverageDamage + output.ImpaleDPS
 			output.CombinedAvg = output.CombinedAvg + output.ImpaleDPS
@@ -5562,7 +5558,7 @@ function calcs.offence(env, actor, activeSkill)
 			if skillFlags.notAverage then
 				t_insert(breakdown.ImpaleDPS, output.HitSpeed and s_format("x %.2f ^8(hit rate)", output.HitSpeed) or s_format("x %.2f ^8(%s rate)", output.Speed, skillFlags.attack and "attack" or "cast"))
 			end
-			t_insert(breakdown.ImpaleDPS, s_format("x %.2f ^8(impale damage multiplier)", ((output.ImpaleModifier or 1) - 1)))
+			t_insert(breakdown.ImpaleDPS, s_format("x %.2f ^8(impale damage multiplier)", (output.ImpaleModifier or 0)))
 			if skillData.dpsMultiplier ~= 1 then
 				t_insert(breakdown.ImpaleDPS, s_format("x %g ^8(dps multiplier for this skill)", skillData.dpsMultiplier))
 			end
